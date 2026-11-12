@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2b86d1">
+<meta name="description" content="Englisch-Vokabeln üben – leicht mit Antwort-Auswahl oder schwer mit Selberschreiben.">
+<title>Englisch-Vokabeltrainer</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Andika:wght@400;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<main class="app">
+
+  <!-- ================= START ================= -->
+  <section id="start" class="screen">
+    <header class="hero">
+      <div class="hero-icon" aria-hidden="true">📚</div>
+      <div>
+        <h1>Vokabel&shy;trainer</h1>
+        <p>Englisch üben · Klasse 4</p>
+      </div>
+    </header>
+
+    <div class="resume" id="resume" hidden>
+      <div>
+        <strong>Runde nicht fertig 🕹️</strong>
+        <span id="resume-txt">12 von 40 Wörtern geschafft</span>
+      </div>
+      <div class="resume-btns">
+        <button class="big blue small" id="resume-go">Weiter ▶</button>
+        <button class="link" id="resume-drop">Verwerfen</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="label-row">
+        <p class="label">Welche Vokabeln?</p>
+        <button class="link" id="toggle-all">Alle auswählen</button>
+      </div>
+      <div class="lists" id="lists"></div>
+    </div>
+
+    <div>
+      <p class="label">Wie schwer?</p>
+      <div class="levels">
+        <button class="level" id="lv-easy" data-level="easy" aria-pressed="true">
+          <span class="ico" aria-hidden="true">🙂</span>
+          <strong>Leicht</strong>
+          <span class="small">Richtige Antwort antippen</span>
+        </button>
+        <button class="level" id="lv-hard" data-level="hard" aria-pressed="false">
+          <span class="ico" aria-hidden="true">💪</span>
+          <strong>Schwer</strong>
+          <span class="small">Antwort selbst schreiben</span>
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <p class="label">Welche Richtung?</p>
+      <div class="seg" role="group" aria-label="Richtung">
+        <button id="dir-deen" data-dir="de-en" aria-pressed="true">🇩🇪 Deutsch → 🇬🇧</button>
+        <button id="dir-ende" data-dir="en-de" aria-pressed="false">🇬🇧 Englisch → 🇩🇪</button>
+      </div>
+    </div>
+
+    <button class="big" id="go">Los geht's! 🚀</button>
+
+    <div class="reset-row" id="reset-row">
+      <span>⭐⭐⭐ = Wort sitzt sicher</span>
+      <button class="link" id="reset">Sterne zurücksetzen</button>
+    </div>
+  </section>
+
+  <!-- ================= QUIZ ================= -->
+  <section id="quiz" class="screen" hidden>
+    <div class="topbar">
+      <button class="close" id="quit" aria-label="Pause – zurück zum Start">✕</button>
+      <div class="bar" aria-hidden="true"><div class="bar-ok" id="bar-ok"></div><div class="bar-no" id="bar-no"></div></div>
+      <span class="count" id="qcount">1/20</span>
+    </div>
+    <div class="tally"><span>✅ <b id="t-ok">0</b></span><span>❌ <b id="t-no">0</b></span><span class="muted" id="t-list"></span></div>
+
+    <div class="qcard">
+      <button class="speak" id="speak" aria-label="Englisch vorlesen" hidden>🔊</button>
+      <div class="qemoji" id="qemoji">📘</div>
+      <p class="qword" id="qword">word</p>
+      <p class="qhint" id="qhint">Was heißt das auf Deutsch?</p>
+    </div>
+
+    <div class="choices" id="choices"></div>
+
+    <form class="typebox" id="typebox" hidden autocomplete="off">
+      <input id="answer" type="text" placeholder="Deine Antwort …" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+      <div class="umlauts" id="umlauts">
+        <button type="button">ä</button><button type="button">ö</button><button type="button">ü</button><button type="button">ß</button>
+      </div>
+      <div class="row2">
+        <button type="button" class="ghost" id="dunno">Weiß nicht 🤷</button>
+        <button type="submit" class="big blue" id="check">Prüfen ✔️</button>
+      </div>
+    </form>
+
+    <div class="feedback" id="feedback" hidden aria-live="polite"></div>
+    <button class="big" id="next" hidden>Weiter ➜</button>
+  </section>
+
+  <!-- ================= RESULT ================= -->
+  <section id="result" class="screen" hidden>
+    <div class="result-top">
+      <div class="trophy" id="trophy">🏆</div>
+      <div class="score" id="score">20 <small>von 20</small></div>
+      <div class="pct" id="pct">100 %</div>
+      <div class="rstars" id="rstars"></div>
+      <p class="msg" id="msg"></p>
+    </div>
+
+    <div id="wrong-wrap">
+      <p class="label">Das üben wir nochmal</p>
+      <ul class="rlist" id="rlist-wrong"></ul>
+    </div>
+    <details class="rdetails" id="right-wrap">
+      <summary id="right-sum">Richtig beantwortet</summary>
+      <ul class="rlist" id="rlist-right"></ul>
+    </details>
+
+    <div class="btns">
+      <button class="big blue" id="practice" hidden>Fehler üben 🎯</button>
+      <button class="big" id="again">Alle nochmal 🔁</button>
+      <button class="ghost" id="home">Zum Start 🏠</button>
+    </div>
+  </section>
+
+  <noscript><p>Bitte JavaScript einschalten, damit der Trainer funktioniert.</p></noscript>
+</main>
+
+<!-- ========== Vokabellisten: eine Datei pro Liste. Neue Liste = neue Zeile hier. ========== -->
+<script src="vokabeln/s196-199.js"></script>
+
+<!-- ========== App ========== -->
+<script src="app.js"></script>
+</body>
+</html>
